@@ -1,0 +1,7 @@
+*.~
+*.cache
+*.pyc
+*.pid
+.vagrant
+venv
+*.py.swp
