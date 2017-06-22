@@ -1,0 +1,49 @@
+Vagrant.configure("2") do |config|
+
+    # Deploy 2 Nodes with two links between them
+
+    config.vm.define "n9k1" do |node|
+        node.vm.box = "n9000v-4gb-ssh"
+        node.vm.base_mac = "0800276CEEAA"
+
+        # port forward for ssh and nxapi https calls
+        node.vm.network "forwarded_port", guest: 22, host: 2221, auto_correct: true, id: "ssh"
+        node.vm.network "forwarded_port", guest: 443, host: 4431, auto_correct: true
+
+        # eth1/1 connected to nxeth1, auto-config not supported.
+        node.vm.network :private_network, virtualbox__intnet: "nxeth1",
+          auto_config: false, mac: "0800276CEE15"
+
+        # eth1/2 connected to nxeth2, auto-config not supported.
+        node.vm.network :private_network, virtualbox__intnet: "nxeth2",
+          auto_config: false, mac: "0800276CEE16"
+
+        node.vm.provider "virtualbox" do |v|
+            v.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+            v.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+
+    config.vm.define "n9k2" do |node|
+        node.vm.box = "n9000v-4gb-ssh"
+        node.vm.base_mac = "0800276DEEAA"
+
+        # port forward for ssh and nxapi https calls
+        node.vm.network "forwarded_port", guest: 22, host: 2222, auto_correct: true, id: "ssh"
+        node.vm.network "forwarded_port", guest: 443, host: 4432, auto_correct: true
+
+        # eth1/1 connected to nxeth1, auto-config not supported.
+        node.vm.network :private_network, virtualbox__intnet: "nxeth1",
+          auto_config: false, mac: "0800276DEE15"
+
+        # eth1/2 connected to nxeth2, auto-config not supported.
+        node.vm.network :private_network, virtualbox__intnet: "nxeth2",
+          auto_config: false, mac: "0800276DEE16"
+
+        node.vm.provider "virtualbox" do |v|
+            v.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+            v.customize ["modifyvm", :id, "--nicpromisc3", "allow-all"]
+        end
+    end
+
+end

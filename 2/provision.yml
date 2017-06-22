@@ -1,0 +1,61 @@
+---
+- name: POST VAGRANT UP PROVISIONING
+  hosts: n9k
+  gather_facts: no
+
+  vars:
+    ssh:
+      host: "{{ ansible_ssh_host }}"
+      username: "vagrant"
+      password: "vagrant"
+      transport: cli
+
+  tasks:
+    - name: configure hostname and domain-name
+      nxos_system:
+        provider: "{{ ssh }}"
+        hostname: "{{ inventory_hostname }}"
+        domain_name: vagrantlab.local
+
+    - name: ensure nxapi is enabled
+      nxos_feature:
+        feature: nxapi
+        state: enabled
+        provider: "{{ ssh }}"
+
+    - name: setup eth1/1
+      nxos_config:
+        lines:
+          - "no switchport"
+          - "mac-address {{ eth11_mac }}"
+          - "ip address {{ eth11_ip }}"
+          - "no shutdown"
+        parents: interface ethernet1/1
+        match: strict
+        provider: "{{ ssh }}"
+
+    - name: setup eth1/2
+      nxos_config:
+        lines:
+          - "no switchport"
+          - "mac-address {{ eth12_mac }}"
+          - "ip address {{ eth12_ip }}"
+          - "no shutdown"
+        parents: interface ethernet1/2
+        match: strict
+        provider: "{{ ssh }}"
+
+
+    - name: test ping from n9k1 to n9k2
+      when: inventory_hostname == "n9k1"
+      nxos_ping:
+        dest: "{{ item }}"
+        provider: "{{ ssh }}"
+      with_items:
+        - 10.0.1.2
+        - 10.0.2.2
+
+    - name: save config
+      nxos_config:
+        save: yes
+        provider: "{{ ssh }}"

@@ -1,0 +1,41 @@
+---
+- name: nxos
+  hosts: n9k
+  gather_facts: no
+
+  vars:
+    ssh:
+      host: "{{ ansible_ssh_host }}"
+      username: "vagrant"
+      password: "vagrant"
+      transport: cli
+
+    nxapi:
+      host: "{{ ansible_ssh_host }}"
+      username: "vagrant"
+      password: "vagrant"
+      transport: nxapi
+      use_ssl: yes
+      validate_certs: no
+      port: "{{ ansible_nxapi_port }}"
+
+  tasks:
+    - name: get nxos facts via ssh
+      nxos_facts:
+        provider: "{{ ssh }}"
+        gather_subset:
+          - interfaces
+      register: nxfacts_ssh
+
+    - name: print facts
+      debug: msg="{{ nxfacts_ssh.ansible_facts.ansible_net_neighbors }}"
+
+    - name: get nxos facts via nxapi
+      nxos_facts:
+        provider: "{{ nxapi }}"
+        gather_subset:
+          - "interfaces"
+      register: nxfacts_nxapi
+
+    - name: print facts
+      debug: msg="{{ nxfacts_nxapi.ansible_facts.ansible_net_neighbors }}"

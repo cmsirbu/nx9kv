@@ -1,0 +1,6 @@
+[all:vars]
+ansible_connection = local
+
+[n9k]
+n9k1 ansible_ssh_host=127.0.0.1 ansible_ssh_port=2221 ansible_nxapi_port=4431 eth11_mac="0800.276C.EE15" eth12_mac="0800.276C.EE16" eth11_ip="10.0.1.1/24" eth12_ip="10.0.2.1/24"
+n9k2 ansible_ssh_host=127.0.0.1 ansible_ssh_port=2222 ansible_nxapi_port=4432 eth11_mac="0800.276D.EE15" eth12_mac="0800.276D.EE16" eth11_ip="10.0.1.2/24" eth12_ip="10.0.2.2/24"
