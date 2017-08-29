@@ -5,3 +5,4 @@
 .vagrant
 venv
 *.py.swp
+facts-*.json

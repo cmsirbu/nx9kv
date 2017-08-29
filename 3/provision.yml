@@ -1,0 +1,35 @@
+---
+- name: POST VAGRANT UP PROVISIONING
+  hosts: n9k
+  gather_facts: no
+
+  vars:
+    ssh:
+      host: "{{ ansible_ssh_host }}"
+      username: "vagrant"
+      password: "vagrant"
+      transport: cli
+
+  tasks:
+    - name: configure hostname and domain-name
+      nxos_system:
+        provider: "{{ ssh }}"
+        hostname: "{{ inventory_hostname }}"
+        domain_name: vagrantlab.local
+
+    - name: ensure nxapi is enabled
+      nxos_feature:
+        feature: nxapi
+        state: enabled
+        provider: "{{ ssh }}"
+
+    - name: ensure lldp is enabled
+      nxos_feature:
+        feature: lldp
+        state: enabled
+        provider: "{{ ssh }}"
+
+    - name: save config
+      nxos_config:
+        save: yes
+        provider: "{{ ssh }}"
