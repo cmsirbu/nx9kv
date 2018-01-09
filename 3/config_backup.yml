@@ -1,0 +1,46 @@
+---
+- name: FETCH CONFIGURATION FROM DEVICES
+  hosts: n9k
+  gather_facts: no
+  tags: fetch
+
+  vars:
+    ssh:
+      host: "{{ ansible_ssh_host }}"
+      username: "vagrant"
+      password: "vagrant"
+      transport: cli
+    local_path: "/home/red/local/dev/templates/n9000v/3/git/n9k"
+
+  tasks:
+    - name: get nxos facts via ssh
+      nxos_facts:
+        provider: "{{ ssh }}"
+        #timeout: 60
+        gather_subset:
+          - all
+      register: nxfacts_ssh
+
+    - name: save running-config to file
+      local_action: copy content={{ nxfacts_ssh.ansible_facts.ansible_net_config }} dest={{ local_path }}/{{ nxfacts_ssh.ansible_facts.ansible_net_hostname }}.txt
+
+
+- name: COMMIT CONFIGURATION CHANGES TO GIT
+  hosts: 127.0.0.1
+  connection: local
+  tags: git
+
+  tasks:
+    - name: remove commented lines with timestamps
+      # Cisco/NXOS specific - avoid command timestamp from always marking config as changed
+      shell: |
+        sed -i -e '/^!/d' git/n9k/*.txt
+
+    - name: commit changes to git
+      shell: |
+        git add n9k/
+        git commit -m "Config snapshot taken $(date +"%Y-%m-%d %H:%M:%S")"
+        # Needed as git commit will fail if there are no changed files
+        exit 0
+      args:
+        chdir: git/
