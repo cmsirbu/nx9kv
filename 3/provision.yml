@@ -31,5 +31,6 @@
 
     - name: save config
       nxos_config:
-        save: yes
+        save_when: always
+        timeout: 30
         provider: "{{ ssh }}"
