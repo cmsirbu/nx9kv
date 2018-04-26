@@ -10,7 +10,7 @@
       username: "vagrant"
       password: "vagrant"
       transport: cli
-    local_path: "/home/red/local/dev/templates/n9000v/3/git/n9k"
+    local_path: "/tmp/git/n9k"
 
   tasks:
     - name: get nxos facts via ssh
@@ -30,17 +30,22 @@
   connection: local
   tags: git
 
+  vars:
+    local_path: "/tmp/git/n9k"
+
   tasks:
     - name: remove commented lines with timestamps
       # Cisco/NXOS specific - avoid command timestamp from always marking config as changed
       shell: |
-        sed -i -e '/^!/d' git/n9k/*.txt
+        sed -i -e '/^!/d' {{ local_path }}/*.txt
+      args:
+        warn: no
 
     - name: commit changes to git
       shell: |
-        git add n9k/
+        git add .
         git commit -m "Config snapshot taken $(date +"%Y-%m-%d %H:%M:%S")"
         # Needed as git commit will fail if there are no changed files
         exit 0
       args:
-        chdir: git/
+        chdir: "{{ local_path }}"
