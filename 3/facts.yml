@@ -1,4 +1,12 @@
 ---
+
+####### README FIRST!!!
+# This playbook has been written pre-Ansible 2.5!
+# Using the facts module with a provider is deprecated in favor of "network_cli" or "httpapi".
+# *_facts modules set facts directly, registering output is not necessary.
+# See config_backup for a post-2.5 example.
+#######
+
 - name: nxos
   hosts: n9k
   gather_facts: no

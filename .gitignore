@@ -6,3 +6,4 @@
 venv
 *.py.swp
 facts-*.json
+*.retry
