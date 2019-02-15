@@ -1,0 +1,13 @@
+[all:vars]
+local_git_repo_path = "/tmp/git/n9k"
+
+[n9k:vars]
+ansible_connection = network_cli
+ansible_network_os = nxos
+ansible_user = vagrant
+ansible_ssh_pass = vagrant
+
+[n9k]
+n9k1 ansible_ssh_host=127.0.0.1 ansible_ssh_port=2221 ansible_nxapi_port=4431
+n9k2 ansible_ssh_host=127.0.0.1 ansible_ssh_port=2222 ansible_nxapi_port=4432
+n9k3 ansible_ssh_host=127.0.0.1 ansible_ssh_port=2223 ansible_nxapi_port=4433
